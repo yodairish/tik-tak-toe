@@ -1,0 +1,32 @@
+{
+  "name": "yodairish-tik-tak-toe",
+  "version": "0.1.0",
+  "description": "",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yodairish/tik-tak-toe.git"
+  },
+  "keywords": [
+    "lint",
+    "workflow"
+  ],
+  "author": "Yodairish",
+  "devDependencies": {
+    "bower": "^1.3.12",
+    "gulp": "^3.8.9",
+    "gulp-jscs": "^1.2.1",
+    "gulp-jshint": "^1.8.5",
+    "gulp-webpack": "^1.1.0",
+    "jest-cli": "^0.1.18",
+    "jscs": "^1.7.3",
+    "jscs-jsdoc": "0.0.24"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yodairish/workflow/issues"
+  },
+  "homepage": "https://github.com/yodairish/workflow"
+}
