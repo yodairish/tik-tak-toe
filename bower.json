@@ -11,5 +11,8 @@
     "node_modules",
     "bower_components",
     "__test__"
-  ]
+  ],
+  "dependencies": {
+    "es6-shim": "~0.23.0"
+  }
 }

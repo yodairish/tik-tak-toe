@@ -4,7 +4,7 @@ var gulp = require('gulp'),
     pf = require('./js/paramFiles'),
     // js
     jshint = require('gulp-jshint'),
-    jscs = require('gulp-jscs'),
+    // jscs = require('gulp-jscs'),
     webpack = require('gulp-webpack'),
     // CONSTANTS
     JS_PATH = 'js',
@@ -28,7 +28,7 @@ gulp.task('jslint', function() {
     .pipe(jshint.extract())
     .pipe(jshint())
     .pipe(jshint.reporter('default'))
-    .pipe(jscs())
+    // .pipe(jscs())
     .pipe(jshint.reporter('fail'));
 });
 
@@ -37,7 +37,16 @@ gulp.task('jslint', function() {
  */
 gulp.task('js', ['jslint'], function() {
   return gulp.src(JS_ENTRY_POINTS)
-    .pipe(webpack())
+    .pipe(webpack({
+      output: {
+        filename: 'bundle.js'
+      },
+      module: {
+        loaders: [
+          { test: /\.js/, loader: '6to5' }
+        ]
+      }
+    }))
     .pipe(gulp.dest(PUBLIC_JS));
 });
 
