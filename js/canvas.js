@@ -1,16 +1,31 @@
 'use strict';
 
-var //cellSize = 0,
+import CONSTANTS from './constants.js';
+
+var cellSize = 0,
+    lineWidth = 0,
     canvas = null,
-    ctx = null;
+    ctx = null,
+    virtualBox = {
+      x: 0,
+      y: 0,
+      side: 0
+    };
 
 export default {
   /**
    * Get canvas element and him context
    */
   init() {
+    var width = window.innerWidth - CONSTANTS.SIDE_BLOCK,
+        height = window.innerHeight;
+    
     canvas = document.querySelector('#game');
     ctx = canvas.getContext('2d');
+    
+    canvas.width = width;
+    canvas.height = height;
+    
     
     this.setFullCanvasSize();
   },
@@ -27,23 +42,31 @@ export default {
    * Set canvas size by screen size
    */
   setFullCanvasSize() {
-    // get screen size
-    // this.setCanvasSize(width, height);
+    var side = (canvas.height < canvas.width ? canvas.height :
+                canvas.width),
+        x = (side < canvas.width ? ((canvas.width - side) / 2) : 
+             0),
+        y = (side < canvas.height ? ((canvas.height - side) / 2) : 
+             0);
+    
+    this.setCanvasSize(x, y, side);
   },
   
   /**
-   * Set new canvas size
-   * @param {Number} width
-   * @param {Number} height
+   * Set new side and position for working place
+   * @param {Number} x
+   * @param {Number} y
+   * @param {Number} side
    */
-  setCanvasSize(width, height) {
+  setCanvasSize(x, y, side) {
     if (!canvas) {
       console.warn('Can\'t change size, cause canvas not defined');
       return;
     }
     
-    canvas.width = width;
-    canvas.height = height;
+    virtualBox.x = x;
+    virtualBox.y = y;
+    virtualBox.side = side;
   },
   
   /**
@@ -52,65 +75,122 @@ export default {
   * @param {Number} y
   * @param {boolean} isWin
   */
-  // cell(x, y, isWin) {
-  //   var coords = this.getCoordsByPosition(x, y);
+  cell(x, y, isWin) {
+    var coords = this.getCoordsByPosition(x, y);
     
-  //   if (coords) {
-  //     ctx.moveTo(coords.x, coords.y);
-  //   }
-  // },
+    ctx.fillStyle = (isWin ? CONSTANTS.COLOR_WIN : CONSTANTS.COLOR_EMPTY);
+    ctx.fillRect(coords.x, coords.y, cellSize, cellSize);
+  },
   
-  // /**
-  // * Draw cell for cross
-  // * @param {Number} x
-  // * @param {Number} y
-  // * @param {boolean} isWin
-  // */
-  // cross(x, y, isWin) {
-  //   this.cell(x, y, isWin);
-  // },
-  
-  // /**
-  // * Draw cell for circle
-  // * @param {Number} x
-  // * @param {Number} y
-  // * @param {boolean} isWin
-  // */
-  // circle(x, y, isWin) {
-  //   this.cell(x, y, isWin);
-  // },
-  
-  // /**
-  // * Update cell size value
-  // * @param {Number} cellsCount
-  // */
-  // setCellSize(cellsCount) {
+  /**
+  * Draw cell for cross
+  * @param {Number} x
+  * @param {Number} y
+  * @param {boolean} isWin
+  */
+  cross(x, y, isWin) {
+    var coords = this.getCoordsByPosition(x, y),
+        padding = cellSize * 0.2,
+        left = coords.x + padding,
+        right = coords.x + cellSize - padding,
+        top = coords.y + padding,
+        bottom = coords.y + cellSize - padding;
     
-  // },
+    this.cell(x, y, isWin);
+    
+    ctx.strokeStyle = CONSTANTS.COLOR_CROSS;
+    ctx.lineWidth = lineWidth;
+    
+    ctx.beginPath();
+    ctx.moveTo(left, top);
+    ctx.lineTo(right, bottom);
+    ctx.closePath();
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(right, top);
+    ctx.lineTo(left, bottom);
+    ctx.closePath();
+    ctx.stroke();
+  },
   
-  // /**
-  // * Get current cell size
-  // * @return {Number}
-  // */
-  // getCellSize() {
-  //   return cellSize;
-  // },
+  /**
+  * Draw cell for circle
+  * @param {Number} x
+  * @param {Number} y
+  * @param {boolean} isWin
+  */
+  circle(x, y, isWin) {
+    var coords = this.getCoordsByPosition(x, y),
+        halfCellSize = (cellSize / 2),
+        centerX = coords.x + halfCellSize,
+        centerY = coords.y + halfCellSize,
+        radius = (cellSize - (cellSize * 0.4)) / 2;
+    
+    this.cell(x, y, isWin);
+    
+    ctx.strokeStyle = CONSTANTS.COLOR_CIRCLE;
+    ctx.lineWidth = lineWidth;
+    
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.closePath();
+    ctx.stroke();
+  },
+  
+  /**
+  * Update cell size by count
+  * @param {Number} cellsInRow
+  */
+  updateCellSize(cellsInRow) {
+    cellSize = virtualBox.side / cellsInRow;
+    lineWidth = cellSize * 0.1;
+  },
+  
+  /**
+  * Get current cell size
+  * @return {Number}
+  */
+  getCellSize() {
+    return cellSize;
+  },
   
   /**
   * Get position on screen coordinates by cell position
+  * @param {Number} x
+  * @param {Number} y
   * @return {Object}
   */
-  // getCoordsByPosition(x, y) {
-    
-  // }
+  getCoordsByPosition(x, y) {
+    return {
+      x: (x * cellSize) + virtualBox.x,
+      y: (y * cellSize) + virtualBox.y
+    };
+  },
   
-  // /**
-  // * Get cell position by screen coordinates
-  // * @param {number} px
-  // * @param {number} py
-  // * @return {?Object}
-  // */
-  // getCellPos(px, py) {
+  /**
+  * Get cell position by screen coordinates
+  * @param {number} px
+  * @param {number} py
+  * @return {?Object}
+  */
+  getCellPos(px, py) {
+    var dx = px - virtualBox.x,
+        dy = py - virtualBox.y,
+        x,
+        y;
     
-  // }
+    if (dx < 0 || dx - virtualBox.side > 0 ||
+        dy < 0 || dy - virtualBox.side > 0) {
+      return null;
+    }
+    
+    x = Math.floor(dx / cellSize);
+    y = Math.floor(dy / cellSize);
+
+    return {
+      x: x,
+      y: y
+    };
+  }
 };

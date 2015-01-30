@@ -36,8 +36,12 @@ gulp.task('jslint', function() {
  * Processing JS files
  */
 gulp.task('js', ['jslint'], function() {
+  var argv = process.argv,
+      watchOn = (argv.indexOf('--watch') !== -1);
+  
   return gulp.src(JS_ENTRY_POINTS)
     .pipe(webpack({
+      watch: watchOn,
       output: {
         filename: 'bundle.js'
       },

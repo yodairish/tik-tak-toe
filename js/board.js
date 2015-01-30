@@ -1,6 +1,7 @@
 'use strict';
 
 import Cell from './cell.js';
+import canvas from './canvas.js';
 
 var board = [];
 
@@ -10,15 +11,40 @@ export default {
    * @param {Number} size
    */
   create(size) {
-    for (let i = 0; i < size; i++) {
-      let newArr = [];
+    if (size === this.getCellsInRow()) {
+      this.cleanAll();
       
-      for (let j = 0; j < size; j++) {
-        newArr.push(new Cell(i, j));
+    } else {
+      for (let i = 0; i < size; i++) {
+        let newArr = [];
+        
+        for (let j = 0; j < size; j++) {
+          newArr.push(new Cell(i, j));
+        }
+        
+        board.push(newArr);
       }
       
-      board.push(newArr);
+      canvas.updateCellSize(this.getCellsInRow());
+      this.draw();
     }
+  },
+  
+  /**
+   * Set all cell on the board at empty state
+   */
+  cleanAll() {
+    board.forEach(line => {
+      line.forEach(cell => cell.setEmpty());
+    });
+  },
+  
+  /**
+   * Get Count of cell on the board
+   * @return {Number}
+   */
+  getCellsInRow() {
+    return board.length;
   },
   
   /**

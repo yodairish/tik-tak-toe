@@ -1,7 +1,7 @@
 'use strict';
 
-import game from './game';
-import canvas from './canvas';
+import game from './game.js';
+import canvas from './canvas.js';
 
 export default {
   /**
@@ -23,7 +23,7 @@ export default {
    */
   onClick(e) {
     var coords = canvas.getCellPos(e.clientX, e.clientY);
-    
+
     if (coords) {
       game.move(coords.x, coords.y);
     }
