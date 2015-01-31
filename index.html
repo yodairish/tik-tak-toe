@@ -9,5 +9,13 @@
   <script type="text/javascript" src="public/js/bundle.js"></script>
 </head>
 <body>
-  <canvas id="game" class="playZone"></canvas>
+  <div class="sideControl js-sideControl">
+    <div class="score">
+      <span class="score-field --playerOne js-scoreOne">0</span>
+      <span class="score-divider">-</span>
+      <span class="score-field --playerTwo js-scoreTwo">0</span>
+    </div>
+    <button class="sideControl-newGame js-newGame">New Game</button>
+  </div>
+  <canvas class="playZone js-game"></canvas>
 </body>

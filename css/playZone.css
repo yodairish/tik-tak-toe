@@ -1,3 +1,78 @@
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+.--playerOne {
+  color: #f00;
+}
+
+.--playerTwo {
+  color: #00f;
+}
+
 .playZone {
   display: block;
+}
+
+.sideControl {
+  width: 200px;
+  height: 100%;
+  float: left;
+  text-align: center;
+}
+
+.sideControl-newGame {
+  border: 3px solid #444;
+  background: none;
+  font-size: 32px;
+  cursor: pointer;
+  color: #222;
+}
+
+.sideControl-newGame:hover {
+  background-color: #d9d9d9;
+}
+
+.score {
+  line-height: 100px;
+  font-size: 74px;
+  margin-bottom: 30px;
+}
+
+.score-field {
+  display: block;
+  line-height: 74px;
+}
+
+.score-divider {
+  display: block;
+  margin-top: -16px;
+  line-height: 32px;
+}
+
+@media (orientation:portrait) {
+  .sideControl {
+    width: 100%;
+    height: 199px;
+    line-height: 100px;
+    border-bottom: 1px solid #999;
+    float: none;
+  }
+  
+  .score {
+    height: 100px;
+    margin-bottom: 0;
+  }
+  
+  .score-field {
+    display: inline-block;
+  }
+  
+  .score-divider {
+    display: inline-block;
+    line-height: 74px;
+    margin: 0 20px;
+  }
 }

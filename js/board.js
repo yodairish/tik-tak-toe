@@ -3,22 +3,22 @@
 import Cell from './cell.js';
 import canvas from './canvas.js';
 
-var board = [];
+var board = [],
+    boardSize = 9;
 
 export default {
   /**
    * Create new board with choosen size of the side
-   * @param {Number} size
    */
-  create(size) {
-    if (size === this.getCellsInRow()) {
+  create() {
+    if (boardSize === this.getCellsInRow()) {
       this.cleanAll();
       
     } else {
-      for (let i = 0; i < size; i++) {
+      for (let i = 0; i < boardSize; i++) {
         let newArr = [];
         
-        for (let j = 0; j < size; j++) {
+        for (let j = 0; j < boardSize; j++) {
           newArr.push(new Cell(i, j));
         }
         

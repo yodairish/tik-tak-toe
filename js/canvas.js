@@ -9,6 +9,8 @@ var cellSize = 0,
     virtualBox = {
       x: 0,
       y: 0,
+      sideX: 0,
+      sideY: 0,
       side: 0
     };
 
@@ -17,10 +19,14 @@ export default {
    * Get canvas element and him context
    */
   init() {
-    var width = window.innerWidth - CONSTANTS.SIDE_BLOCK,
-        height = window.innerHeight;
+    var isPortrait = (window.innerWidth < window.innerHeight),
+        width = window.innerWidth - (isPortrait ? 0 : CONSTANTS.SIDE_BLOCK),
+        height = window.innerHeight - (isPortrait ? CONSTANTS.SIDE_BLOCK : 0);
+        
+    virtualBox.sideX = (isPortrait ? 0 : CONSTANTS.SIDE_BLOCK);
+    virtualBox.sideY = (isPortrait ? CONSTANTS.SIDE_BLOCK : 0);
     
-    canvas = document.querySelector('#game');
+    canvas = document.querySelector('.js-game');
     ctx = canvas.getContext('2d');
     
     canvas.width = width;
@@ -175,8 +181,8 @@ export default {
   * @return {?Object}
   */
   getCellPos(px, py) {
-    var dx = px - virtualBox.x,
-        dy = py - virtualBox.y,
+    var dx = px - virtualBox.x - virtualBox.sideX,
+        dy = py - virtualBox.y - virtualBox.sideY,
         x,
         y;
     

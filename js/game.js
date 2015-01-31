@@ -3,9 +3,15 @@
 import CONSTANTS from './constants.js';
 import board from './board.js';
 import canvas from './canvas.js';
+import sideBar from './sideBar.js';
 
 var currentPlayer = CONSTANTS.CROSS,
-    winScore = 5;
+    winScore = 5,
+    gameFinished = false,
+    score = {
+      [CONSTANTS.CROSS]: 0,
+      [CONSTANTS.CIRCLE]: 0
+    };
 
 export default {
   /**
@@ -13,17 +19,18 @@ export default {
    */
   init() {
     canvas.init();
-    // controls.init();
-    this.newGame(9);
+    sideBar.init();
+    sideBar.bindNewGame(this.newGame);
+    this.newGame();
   },
   
   /**
    * Create new game
-   * 
    */
-  newGame(size) {
-    board.create(size);
+  newGame() {
+    board.create();
     currentPlayer = CONSTANTS.CROSS;
+    gameFinished = false;
   },
 
   /**
@@ -32,14 +39,18 @@ export default {
    * @param {Number} y
    */
   move(x, y) {
+    if (gameFinished) {
+      return;
+    }
+    
     var cell = board.getCell(x, y);
     
     if (cell && cell.isEmpty()) {
       cell.setState(currentPlayer);
       
       if (this.checkWin(x, y)) {
-        alert('win');
-        this.newGame(9);
+        gameFinished = true;
+        
       } else {
         this.switchSide();
       }
@@ -91,7 +102,8 @@ export default {
    */
   setWin(winCells) {
     winCells.forEach(cell => cell.setWin());
-    // do stuff like show message
+    score[currentPlayer]++;
+    sideBar.updateScore(score);
   },
   
   /**
