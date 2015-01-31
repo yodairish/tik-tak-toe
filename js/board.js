@@ -3,38 +3,44 @@
 import Cell from './cell.js';
 import canvas from './canvas.js';
 
-var board = [],
-    boardSize = 9;
-
 export default {
+  board: [],
+  boardSize: 3,
+  
   /**
    * Create new board with choosen size of the side
    */
   create() {
-    if (boardSize === this.getCellsInRow()) {
-      this.cleanAll();
+    this.board = [];
+    
+    for (let i = 0; i < this.boardSize; i++) {
+      let newArr = [];
       
-    } else {
-      for (let i = 0; i < boardSize; i++) {
-        let newArr = [];
-        
-        for (let j = 0; j < boardSize; j++) {
-          newArr.push(new Cell(i, j));
-        }
-        
-        board.push(newArr);
+      for (let j = 0; j < this.boardSize; j++) {
+        newArr.push(new Cell(i, j));
       }
       
-      canvas.updateCellSize(this.getCellsInRow());
-      this.draw();
+      this.board.push(newArr);
     }
+    
+    canvas.updateCellSize(this.getCellsInRow());
+    this.draw();
+  },
+  
+  /**
+   * Update size of the board and recreate it
+   * @param {Number} size
+   */
+  setBoardSize(size) {
+    this.boardSize = size;
+    this.create();
   },
   
   /**
    * Set all cell on the board at empty state
    */
-  cleanAll() {
-    board.forEach(line => {
+  reset() {
+    this.board.forEach(line => {
       line.forEach(cell => cell.setEmpty());
     });
   },
@@ -44,7 +50,7 @@ export default {
    * @return {Number}
    */
   getCellsInRow() {
-    return board.length;
+    return this.boardSize;
   },
   
   /**
@@ -54,7 +60,7 @@ export default {
    * @return {?Object}
    */
   getCell(x, y) {
-    return (board[x] && board[x][y] ? board[x][y] :
+    return (this.board[x] && this.board[x][y] ? this.board[x][y] :
             null);
   },
   
@@ -62,8 +68,8 @@ export default {
    * Draw all cells on the board
    */
   draw() {
-    board.forEach(function(line) {
-      line.forEach(function(cell) {
+    this.board.forEach(line => {
+      line.forEach(cell => {
         cell.draw();
       });
     });

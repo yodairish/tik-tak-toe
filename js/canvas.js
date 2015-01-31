@@ -85,7 +85,11 @@ export default {
     var coords = this.getCoordsByPosition(x, y);
     
     ctx.fillStyle = (isWin ? CONSTANTS.COLOR_WIN : CONSTANTS.COLOR_EMPTY);
+    ctx.strokeStyle = CONSTANTS.COLOR_BORDER;
+    ctx.lineWidth = 1;
+    
     ctx.fillRect(coords.x, coords.y, cellSize, cellSize);
+    ctx.strokeRect(coords.x, coords.y, cellSize, cellSize);
   },
   
   /**

@@ -6,7 +6,7 @@ import canvas from './canvas.js';
 import sideBar from './sideBar.js';
 
 var currentPlayer = CONSTANTS.CROSS,
-    winScore = 5,
+    winScore = 3  ,
     gameFinished = false,
     score = {
       [CONSTANTS.CROSS]: 0,
@@ -21,6 +21,8 @@ export default {
     canvas.init();
     sideBar.init();
     sideBar.bindNewGame(this.newGame);
+    sideBar.addLineChangedCallback(this.updateBoardSize.bind(this));
+    board.create();
     this.newGame();
   },
   
@@ -28,9 +30,21 @@ export default {
    * Create new game
    */
   newGame() {
-    board.create();
+    board.reset();
     currentPlayer = CONSTANTS.CROSS;
     gameFinished = false;
+  },
+  
+  /**
+   * Update board with new line size
+   */
+  updateBoardSize() {
+    var lineSize = sideBar.getLineSize();
+    
+    winScore = (lineSize < 6 ? lineSize : 5);
+    
+    board.setBoardSize(lineSize);
+    this.newGame();
   },
 
   /**

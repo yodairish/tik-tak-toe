@@ -2,18 +2,25 @@
 
 import CONSTANTS from './constants.js';
 
-var buttonNewGame = null,
-    scoreOne = null,
-    scoreTwo = null;
-
 export default {
+  buttonNewGame: null,
+  scoreOne: null,
+  scoreTwo: null,
+  lineSize: null,
+  lineSizeValue: null,
+  lineChangeCallbacks: [],
+  
   /**
    * Initialize elements on the sidebar
    */
   init() {
-    buttonNewGame = document.querySelector('.js-newGame');
-    scoreOne = document.querySelector('.js-scoreOne');
-    scoreTwo = document.querySelector('.js-scoreTwo');
+    this.buttonNewGame = document.querySelector('.js-newGame');
+    this.scoreOne = document.querySelector('.js-scoreOne');
+    this.scoreTwo = document.querySelector('.js-scoreTwo');
+    this.lineSize = document.querySelector('.js-lineSize');
+    this.lineSizeValue = document.querySelector('.js-lineSizeValue');
+    
+    this.lineSize.addEventListener('input', this.lineSizeChanged.bind(this));
   },
   
   /**
@@ -21,11 +28,40 @@ export default {
    * @param {Object} score
    */
   updateScore(score) {
-    scoreOne.textContent = score[CONSTANTS.CROSS];
-    scoreTwo.textContent = score[CONSTANTS.CIRCLE];
+    this.scoreOne.textContent = score[CONSTANTS.CROSS];
+    this.scoreTwo.textContent = score[CONSTANTS.CIRCLE];
   },
   
-  bindNewGame(handler) {
-    buttonNewGame.addEventListener('click', handler);
+  /**
+   * Get current line size
+   * @return {Number}
+   */
+  getLineSize() {
+    return parseInt(this.lineSize.value, 10);
+  },
+  
+  /**
+   * Bind callback on the new game button
+   * @param {Function} cb
+   */
+  bindNewGame(cb) {
+    this.buttonNewGame.addEventListener('click', cb);
+  },
+  
+  /**
+   * Add callback on change line size event
+   * @param {Function} cb
+   */
+  addLineChangedCallback(cb) {
+    this.lineChangeCallbacks.push(cb);
+  },
+  
+  /**
+   * Processing change the line size
+   */
+  lineSizeChanged() {
+    this.lineSizeValue.textContent = this.lineSize.value;
+    
+    this.lineChangeCallbacks.forEach(cb => cb());
   }
 };
