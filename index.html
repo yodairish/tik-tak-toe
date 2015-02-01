@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<head>
+  <title>Tic Tak Toe</title>
+  
+  <link rel="stylesheet" href="css/html5reset-1.6.1.css" type="text/css" />
+  <link rel="stylesheet" href="css/playZone.css" type="text/css" />
+  
+  <script type="text/javascript" src="bower_components/es6-shim/es6-shim.min.js"></script>
+  <script type="text/javascript" src="public/js/bundle.js"></script>
+</head>
+<body>
+  <div class="sideControl js-sideControl">
+    <div class="score">
+      <span class="score-field --playerOne js-scoreOne">0</span>
+      <span class="score-divider">-</span>
+      <span class="score-field --playerTwo js-scoreTwo">0</span>
+    </div>
+    <button class="sideControl-newGame js-newGame">New Game</button>
+    <div class="sizeControl">
+      <label>
+        Size: <input type="range" class="sizeControl-input js-lineSize" min="3" value="3" max=15 step="1" />
+      </label>
+      <span class="sizeControl-value js-lineSizeValue">3</span>
+    </div>
+  </div>
+  <canvas class="playZone js-game"></canvas>
+</body>
