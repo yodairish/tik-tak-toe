@@ -4,7 +4,7 @@ var gulp = require('gulp'),
     pf = require('./js/paramFiles'),
     // js
     jshint = require('gulp-jshint'),
-    // jscs = require('gulp-jscs'),
+    jscs = require('gulp-jscs'),
     webpack = require('gulp-webpack'),
     // CONSTANTS
     JS_PATH = 'js',
@@ -28,7 +28,7 @@ gulp.task('jslint', function() {
     .pipe(jshint.extract())
     .pipe(jshint())
     .pipe(jshint.reporter('default'))
-    // .pipe(jscs())
+    .pipe(jscs())
     .pipe(jshint.reporter('fail'));
 });
 

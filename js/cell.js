@@ -8,7 +8,8 @@ export default class {
     this.x = x;
     this.y = y;
     this.isWin = false;
-    this.state = CONSTANTS.EMPTY; //Math.floor(Math.random() * 3);
+    this.hover = false;
+    this.state = CONSTANTS.EMPTY;
   }
   
   /**
@@ -35,7 +36,8 @@ export default class {
    * @return {boolean}
    */
   isEmpty() {
-    return (this.state === CONSTANTS.EMPTY);
+    return (this.state === CONSTANTS.EMPTY ||
+            this.state === CONSTANTS.HOVER);
   }
   
   /**
@@ -55,17 +57,30 @@ export default class {
   }
   
   /**
+   * Change hovered state
+   * @param {boolean} hover
+   */
+  setHover(hover) {
+    hover = !!hover;
+    
+    if (this.hover !== hover) {
+      this.hover = hover;
+      this.draw();
+    }
+  }
+  
+  /**
    * Draw current cell to the canvas
    */
   draw() {
     if (this.state === CONSTANTS.EMPTY) {
-      canvas.cell(this.x, this.y, this.isWin);
-      
+      canvas.cell(this.x, this.y, this.isWin, this.hover);
+    
     } else if (this.state === CONSTANTS.CROSS) {
-      canvas.cross(this.x, this.y, this.isWin);
+      canvas.cross(this.x, this.y, this.isWin, this.hover);
       
     } else if (this.state === CONSTANTS.CIRCLE) {
-      canvas.circle(this.x, this.y, this.isWin);
+      canvas.circle(this.x, this.y, this.isWin, this.hover);
     }
   }
 }

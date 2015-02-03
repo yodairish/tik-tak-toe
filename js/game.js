@@ -6,8 +6,9 @@ import canvas from './canvas.js';
 import sideBar from './sideBar.js';
 
 var currentPlayer = CONSTANTS.CROSS,
-    winScore = 3  ,
+    winScore = 3,
     gameFinished = false,
+    hoveredCell = null,
     score = {
       [CONSTANTS.CROSS]: 0,
       [CONSTANTS.CIRCLE]: 0
@@ -67,6 +68,32 @@ export default {
         
       } else {
         this.switchSide();
+      }
+    }
+  },
+  
+  /**
+   * Processing player hover cell
+   * @param {Number} x
+   * @param {Number} y
+   */
+  hover(x, y) {
+    if (gameFinished) {
+      return;
+    }
+    
+    var cell = board.getCell(x, y);
+    
+    if (hoveredCell !== cell) {
+      if (hoveredCell) {
+        hoveredCell.setHover(false);
+      }
+      
+      if (cell) {
+        cell.setHover(true);
+        hoveredCell = cell;
+      } else {
+        hoveredCell = null;
       }
     }
   },
@@ -133,7 +160,7 @@ export default {
           cell = board.getCell(nextX, y),
           samePlayer = cell.getState() === currentPlayer;
       
-      while(nextX <= last && samePlayer) {
+      while (nextX <= last && samePlayer) {
         winCells.push(cell);
         
         nextX++;
@@ -148,7 +175,7 @@ export default {
           cell = board.getCell(nextX, y),
           samePlayer = cell.getState() === currentPlayer;
       
-      while(nextX >= 0 && samePlayer) {
+      while (nextX >= 0 && samePlayer) {
         winCells.push(cell);
         
         nextX--;
@@ -173,7 +200,7 @@ export default {
           cell = board.getCell(x, nextY),
           samePlayer = cell.getState() === currentPlayer;
       
-      while(nextY <= last && samePlayer) {
+      while (nextY <= last && samePlayer) {
         winCells.push(cell);
         
         nextY++;
@@ -188,7 +215,7 @@ export default {
           cell = board.getCell(x, nextY),
           samePlayer = cell.getState() === currentPlayer;
       
-      while(nextY >= 0 && samePlayer) {
+      while (nextY >= 0 && samePlayer) {
         winCells.push(cell);
         
         nextY--;
@@ -214,7 +241,7 @@ export default {
           cell = board.getCell(nextX, nextY),
           samePlayer = cell.getState() === currentPlayer;
       
-      while(nextX <= last && nextY <= last && samePlayer) {
+      while (nextX <= last && nextY <= last && samePlayer) {
         winCells.push(cell);
         
         nextX++;
@@ -231,7 +258,7 @@ export default {
           cell = board.getCell(nextX, nextY),
           samePlayer = cell.getState() === currentPlayer;
       
-      while(nextX >= 0 && nextY >= 0 && samePlayer) {
+      while (nextX >= 0 && nextY >= 0 && samePlayer) {
         winCells.push(cell);
         
         nextX--;
@@ -258,7 +285,7 @@ export default {
           cell = board.getCell(nextX, nextY),
           samePlayer = cell.getState() === currentPlayer;
       
-      while(nextX <= last && nextY >= 0 && samePlayer) {
+      while (nextX <= last && nextY >= 0 && samePlayer) {
         winCells.push(cell);
         
         nextX++;
@@ -275,7 +302,7 @@ export default {
           cell = board.getCell(nextX, nextY),
           samePlayer = cell.getState() === currentPlayer;
       
-      while(nextX >= 0 && nextY <= last && samePlayer) {
+      while (nextX >= 0 && nextY <= last && samePlayer) {
         winCells.push(cell);
         
         nextX--;
