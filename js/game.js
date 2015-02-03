@@ -8,6 +8,7 @@ import sideBar from './sideBar.js';
 var currentPlayer = CONSTANTS.CROSS,
     winScore = 3,
     gameFinished = false,
+    hoveredCell = null,
     score = {
       [CONSTANTS.CROSS]: 0,
       [CONSTANTS.CIRCLE]: 0
@@ -67,6 +68,32 @@ export default {
         
       } else {
         this.switchSide();
+      }
+    }
+  },
+  
+  /**
+   * Processing player hover cell
+   * @param {Number} x
+   * @param {Number} y
+   */
+  hover(x, y) {
+    if (gameFinished) {
+      return;
+    }
+    
+    var cell = board.getCell(x, y);
+    
+    if (hoveredCell !== cell) {
+      if (hoveredCell) {
+        hoveredCell.setHover(false);
+      }
+      
+      if (cell) {
+        cell.setHover(true);
+        hoveredCell = cell;
+      } else {
+        hoveredCell = null;
       }
     }
   },

@@ -1,2 +1,9 @@
+<<<<<<< HEAD
 node_moduless
 npm-debug.log
+=======
+node_modules
+bower_components
+npm-debug.log
+public
+>>>>>>> master

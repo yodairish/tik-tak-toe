@@ -23,7 +23,7 @@ gulp.task('jslint', function() {
   if (!files) {
     files = [pf.js(JS_PATH)];
   }
-  
+
   files = files.concat(['!public/**/*.*', '!bower_components/**/*.*']);
 
   return gulp.src(files)

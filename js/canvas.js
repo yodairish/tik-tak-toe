@@ -81,11 +81,15 @@ export default {
   * @param {Number} x
   * @param {Number} y
   * @param {boolean} isWin
+  * @param {boolean} hover
   */
-  cell(x, y, isWin) {
+  cell(x, y, isWin, hover) {
     var coords = this.getCoordsByPosition(x, y);
     
-    ctx.fillStyle = (isWin ? CONSTANTS.COLOR_WIN : CONSTANTS.COLOR_EMPTY);
+    ctx.fillStyle = (isWin ? CONSTANTS.COLOR_WIN :
+                     hover ? CONSTANTS.COLOR_HOVER :
+                     CONSTANTS.COLOR_EMPTY);
+                    
     ctx.strokeStyle = CONSTANTS.COLOR_BORDER;
     ctx.lineWidth = 1;
     
@@ -98,8 +102,9 @@ export default {
   * @param {Number} x
   * @param {Number} y
   * @param {boolean} isWin
+  * @param {boolean} hover
   */
-  cross(x, y, isWin) {
+  cross(x, y, isWin, hover) {
     var coords = this.getCoordsByPosition(x, y),
         padding = cellSize * 0.2,
         left = coords.x + padding,
@@ -107,8 +112,8 @@ export default {
         top = coords.y + padding,
         bottom = coords.y + cellSize - padding;
     
-    this.cell(x, y, isWin);
-    
+    this.cell(x, y, isWin, hover);
+
     ctx.strokeStyle = CONSTANTS.COLOR_CROSS;
     ctx.lineWidth = lineWidth;
     
@@ -130,16 +135,18 @@ export default {
   * @param {Number} x
   * @param {Number} y
   * @param {boolean} isWin
+  * @param {boolean} hover
   */
-  circle(x, y, isWin) {
+  circle(x, y, isWin, hover) {
     var coords = this.getCoordsByPosition(x, y),
         halfCellSize = (cellSize / 2),
         centerX = coords.x + halfCellSize,
         centerY = coords.y + halfCellSize,
         radius = (cellSize - (cellSize * 0.4)) / 2;
     
-    this.cell(x, y, isWin);
-    
+
+    this.cell(x, y, isWin, hover);
+
     ctx.strokeStyle = CONSTANTS.COLOR_CIRCLE;
     ctx.lineWidth = lineWidth;
     
