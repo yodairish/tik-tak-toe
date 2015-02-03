@@ -78,17 +78,18 @@
 	  return obj && (obj["default"] || obj);
 	};
 
-	var CONSTANTS = _interopRequire(__webpack_require__(3));
+	var CONSTANTS = _interopRequire(__webpack_require__(4));
 
-	var board = _interopRequire(__webpack_require__(4));
+	var board = _interopRequire(__webpack_require__(5));
 
-	var canvas = _interopRequire(__webpack_require__(5));
+	var canvas = _interopRequire(__webpack_require__(6));
 
-	var sideBar = _interopRequire(__webpack_require__(6));
+	var sideBar = _interopRequire(__webpack_require__(7));
 
 	var currentPlayer = CONSTANTS.CROSS,
 	    winScore = 3,
 	    gameFinished = false,
+	    hoveredCell = null,
 	    score = (function () {
 	  var _score = {};
 
@@ -152,6 +153,32 @@
 	        gameFinished = true;
 	      } else {
 	        this.switchSide();
+	      }
+	    }
+	  },
+
+	  /**
+	   * Processing player hover cell
+	   * @param {Number} x
+	   * @param {Number} y
+	   */
+	  hover: function hover(x, y) {
+	    if (gameFinished) {
+	      return;
+	    }
+
+	    var cell = board.getCell(x, y);
+
+	    if (hoveredCell !== cell) {
+	      if (hoveredCell) {
+	        hoveredCell.setHover(false);
+	      }
+
+	      if (cell) {
+	        cell.setHover(true);
+	        hoveredCell = cell;
+	      } else {
+	        hoveredCell = null;
 	      }
 	    }
 	  },
@@ -384,7 +411,7 @@
 	  return obj && (obj["default"] || obj);
 	};
 
-	var mouse = _interopRequire(__webpack_require__(7));
+	var mouse = _interopRequire(__webpack_require__(3));
 
 	module.exports = {
 	  /**
@@ -401,6 +428,70 @@
 
 	"use strict";
 
+	var _interopRequire = function (obj) {
+	  return obj && (obj["default"] || obj);
+	};
+
+	var game = _interopRequire(__webpack_require__(1));
+
+	var canvas = _interopRequire(__webpack_require__(6));
+
+	module.exports = {
+	  /**
+	   * Bind click event on canvas
+	   */
+	  init: function init() {
+	    var canvasElem = canvas.getCanvas();
+
+	    if (canvasElem) {
+	      canvasElem.addEventListener("click", this.onClick);
+	      canvasElem.addEventListener("mousemove", this.onMove);
+	      canvasElem.addEventListener("mouseout", this.onOut);
+	    } else {
+	      console.warn("Canvas is not defined");
+	    }
+	  },
+
+	  /**
+	   * Processing mouse click
+	   * @param {Object} e
+	   */
+	  onClick: function onClick(e) {
+	    var coords = canvas.getCellPos(e.clientX, e.clientY);
+
+	    if (coords) {
+	      game.move(coords.x, coords.y);
+	    }
+	  },
+
+	  /**
+	   * Processing mouse move
+	   * @param {Object} e
+	   */
+	  onMove: function onMove(e) {
+	    var coords = canvas.getCellPos(e.clientX, e.clientY);
+
+	    if (coords) {
+	      game.hover(coords.x, coords.y);
+	    } else {
+	      game.hover(-1, -1);
+	    }
+	  },
+
+	  /**
+	   * Processing mouse move
+	   */
+	  onOut: function onOut() {
+	    game.hover(-1, -1);
+	  }
+	};
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
 	module.exports = {
 	  EMPTY: 0,
 	  CROSS: 1,
@@ -409,15 +500,16 @@
 	  BOARD_BORDER: 3,
 	  SIDE_BLOCK: 200,
 
-	  COLOR_BORDER: "#aaa",
+	  COLOR_BORDER: "#999",
 	  COLOR_EMPTY: "#ccc",
+	  COLOR_HOVER: "#bbb",
 	  COLOR_WIN: "#aaa",
 	  COLOR_CROSS: "#f00",
 	  COLOR_CIRCLE: "#00f"
 	};
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -428,7 +520,7 @@
 
 	var Cell = _interopRequire(__webpack_require__(8));
 
-	var canvas = _interopRequire(__webpack_require__(5));
+	var canvas = _interopRequire(__webpack_require__(6));
 
 	module.exports = {
 	  board: [],
@@ -505,7 +597,7 @@
 	};
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -514,7 +606,7 @@
 	  return obj && (obj["default"] || obj);
 	};
 
-	var CONSTANTS = _interopRequire(__webpack_require__(3));
+	var CONSTANTS = _interopRequire(__webpack_require__(4));
 
 	var cellSize = 0,
 	    lineWidth = 0,
@@ -578,6 +670,7 @@
 	  setCanvasSize: function setCanvasSize(x, y, side) {
 	    if (!canvas) {
 	      console.warn("Can't change size, cause canvas not defined");
+
 	      return;
 	    }
 
@@ -591,11 +684,13 @@
 	  * @param {Number} x
 	  * @param {Number} y
 	  * @param {boolean} isWin
+	  * @param {boolean} hover
 	  */
-	  cell: function cell(x, y, isWin) {
+	  cell: function cell(x, y, isWin, hover) {
 	    var coords = this.getCoordsByPosition(x, y);
 
-	    ctx.fillStyle = isWin ? CONSTANTS.COLOR_WIN : CONSTANTS.COLOR_EMPTY;
+	    ctx.fillStyle = isWin ? CONSTANTS.COLOR_WIN : hover ? CONSTANTS.COLOR_HOVER : CONSTANTS.COLOR_EMPTY;
+
 	    ctx.strokeStyle = CONSTANTS.COLOR_BORDER;
 	    ctx.lineWidth = 1;
 
@@ -608,8 +703,9 @@
 	  * @param {Number} x
 	  * @param {Number} y
 	  * @param {boolean} isWin
+	  * @param {boolean} hover
 	  */
-	  cross: function cross(x, y, isWin) {
+	  cross: function cross(x, y, isWin, hover) {
 	    var coords = this.getCoordsByPosition(x, y),
 	        padding = cellSize * 0.2,
 	        left = coords.x + padding,
@@ -617,7 +713,7 @@
 	        top = coords.y + padding,
 	        bottom = coords.y + cellSize - padding;
 
-	    this.cell(x, y, isWin);
+	    this.cell(x, y, isWin, hover);
 
 	    ctx.strokeStyle = CONSTANTS.COLOR_CROSS;
 	    ctx.lineWidth = lineWidth;
@@ -640,15 +736,17 @@
 	  * @param {Number} x
 	  * @param {Number} y
 	  * @param {boolean} isWin
+	  * @param {boolean} hover
 	  */
-	  circle: function circle(x, y, isWin) {
+	  circle: function circle(x, y, isWin, hover) {
 	    var coords = this.getCoordsByPosition(x, y),
 	        halfCellSize = cellSize / 2,
 	        centerX = coords.x + halfCellSize,
 	        centerY = coords.y + halfCellSize,
 	        radius = (cellSize - cellSize * 0.4) / 2;
 
-	    this.cell(x, y, isWin);
+
+	    this.cell(x, y, isWin, hover);
 
 	    ctx.strokeStyle = CONSTANTS.COLOR_CIRCLE;
 	    ctx.lineWidth = lineWidth;
@@ -716,7 +814,7 @@
 	};
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -725,7 +823,7 @@
 	  return obj && (obj["default"] || obj);
 	};
 
-	var CONSTANTS = _interopRequire(__webpack_require__(3));
+	var CONSTANTS = _interopRequire(__webpack_require__(4));
 
 	module.exports = {
 	  buttonNewGame: null,
@@ -794,46 +892,6 @@
 	};
 
 /***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var _interopRequire = function (obj) {
-	  return obj && (obj["default"] || obj);
-	};
-
-	var game = _interopRequire(__webpack_require__(1));
-
-	var canvas = _interopRequire(__webpack_require__(5));
-
-	module.exports = {
-	  /**
-	   * Bind click event on canvas
-	   */
-	  init: function init() {
-	    var canvasElem = canvas.getCanvas();
-
-	    if (canvasElem) {
-	      canvasElem.addEventListener("click", this.onClick);
-	    } else {
-	      console.warn("Canvas is not defined");
-	    }
-	  },
-
-	  /**
-	   * 
-	   */
-	  onClick: function onClick(e) {
-	    var coords = canvas.getCellPos(e.clientX, e.clientY);
-
-	    if (coords) {
-	      game.move(coords.x, coords.y);
-	    }
-	  }
-	};
-
-/***/ },
 /* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -848,16 +906,17 @@
 	  return obj && (obj["default"] || obj);
 	};
 
-	var CONSTANTS = _interopRequire(__webpack_require__(3));
+	var CONSTANTS = _interopRequire(__webpack_require__(4));
 
-	var canvas = _interopRequire(__webpack_require__(5));
+	var canvas = _interopRequire(__webpack_require__(6));
 
 	module.exports = (function () {
 	  var _class = function (x, y) {
 	    this.x = x;
 	    this.y = y;
 	    this.isWin = false;
-	    this.state = CONSTANTS.EMPTY; //Math.floor(Math.random() * 3);
+	    this.hover = false;
+	    this.state = CONSTANTS.EMPTY;
 	  };
 
 	  _prototypeProperties(_class, null, {
@@ -897,7 +956,7 @@
 	       * @return {boolean}
 	       */
 	      value: function isEmpty() {
-	        return this.state === CONSTANTS.EMPTY;
+	        return this.state === CONSTANTS.EMPTY || this.state === CONSTANTS.HOVER;
 	      },
 	      writable: true,
 	      enumerable: true,
@@ -929,6 +988,24 @@
 	      enumerable: true,
 	      configurable: true
 	    },
+	    setHover: {
+
+	      /**
+	       * Change hovered state
+	       * @param {boolean} hover
+	       */
+	      value: function setHover(hover) {
+	        hover = !!hover;
+
+	        if (this.hover !== hover) {
+	          this.hover = hover;
+	          this.draw();
+	        }
+	      },
+	      writable: true,
+	      enumerable: true,
+	      configurable: true
+	    },
 	    draw: {
 
 	      /**
@@ -936,11 +1013,11 @@
 	       */
 	      value: function draw() {
 	        if (this.state === CONSTANTS.EMPTY) {
-	          canvas.cell(this.x, this.y, this.isWin);
+	          canvas.cell(this.x, this.y, this.isWin, this.hover);
 	        } else if (this.state === CONSTANTS.CROSS) {
-	          canvas.cross(this.x, this.y, this.isWin);
+	          canvas.cross(this.x, this.y, this.isWin, this.hover);
 	        } else if (this.state === CONSTANTS.CIRCLE) {
-	          canvas.circle(this.x, this.y, this.isWin);
+	          canvas.circle(this.x, this.y, this.isWin, this.hover);
 	        }
 	      },
 	      writable: true,
